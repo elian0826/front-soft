@@ -1,0 +1,37 @@
+<div class="contenedor">
+  <h2>Gestión de Monedas</h2>
+
+  <form (ngSubmit)="guardar()" #formulario="ngForm" class="formulario">
+    <input
+      type="text"
+      name="tipo_moneda"
+      [(ngModel)]="moneda.tipo_moneda"
+      required
+      placeholder="Tipo de moneda"
+    />
+    <button type="submit" [disabled]="formulario.invalid">
+      {{ moneda.id ? 'Actualizar' : 'Agregar' }}
+    </button>
+    <button type="button" (click)="limpiar()">Limpiar</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tipo de Moneda</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let m of monedas">
+        <td>{{ m.id }}</td>
+        <td>{{ m.tipo_moneda }}</td>
+        <td>
+          <button (click)="seleccionar(m)">Editar</button>
+          <button (click)="eliminar(m.id!)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

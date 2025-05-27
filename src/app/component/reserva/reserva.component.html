@@ -1,0 +1,179 @@
+<div class="container mt-4">
+    <h2>Gestión de Reservas</h2>
+
+    <!-- Mensajes de error -->
+    <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{errorMessage}}
+        <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
+
+    <!-- Mensajes de éxito -->
+    <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+        {{successMessage}}
+        <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+    </div>
+
+    <form [formGroup]="reservaForm" (ngSubmit)="onSubmit()" class="mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="fecha_vuelos">Fecha de Vuelo</label>
+                    <input type="date" class="form-control" id="fecha_vuelos" formControlName="fecha_vuelos">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="hora">Hora</label>
+                    <input type="time" class="form-control" id="hora" formControlName="hora">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="cliente_id">Cliente</label>
+                    <select class="form-control" id="cliente_id" formControlName="cliente_id">
+                        <option value="">Seleccione un cliente</option>
+                        <option *ngFor="let cliente of clientes" [value]="cliente.id">
+                            {{cliente.nombre}} {{cliente.apellido}} - {{cliente.documento}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="aerolinea_id">Aerolínea</label>
+                    <select class="form-control" id="aerolinea_id" formControlName="aerolinea_id">
+                        <option value="">Seleccione una aerolínea</option>
+                        <option *ngFor="let aerolinea of aerolineas" [value]="aerolinea.id">
+                            {{aerolinea.nombre}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="origen_id">Ciudad Origen</label>
+                    <select class="form-control" id="origen_id" formControlName="origen_id">
+                        <option value="">Seleccione una ciudad</option>
+                        <option *ngFor="let ciudad of ciudades" [value]="ciudad.id">
+                            {{ciudad.nombre}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="destino_id">Ciudad Destino</label>
+                    <select class="form-control" id="destino_id" formControlName="destino_id">
+                        <option value="">Seleccione una ciudad</option>
+                        <option *ngFor="let ciudad of ciudades" [value]="ciudad.id">
+                            {{ciudad.nombre}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="moneda_id">Moneda</label>
+                    <select class="form-control" id="moneda_id" formControlName="moneda_id">
+                        <option value="">Seleccione moneda</option>
+                        <option *ngFor="let moneda of monedas" [value]="moneda.id">
+                            {{moneda.tipo_moneda}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="tipo_pago_id">Tipo de Pago</label>
+                    <select class="form-control" id="tipo_pago_id" formControlName="tipo_pago_id">
+                        <option value="">Seleccione tipo de pago</option>
+                        <option *ngFor="let tipoPago of tiposPago" [value]="tipoPago.id">
+                            {{tipoPago.medio_pago}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="numero_vuelos">Número de Vuelos</label>
+                    <input type="number" class="form-control" id="numero_vuelos" formControlName="numero_vuelos">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="valor">Valor</label>
+                    <input type="number" class="form-control" id="valor" formControlName="valor">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="valor_equipaje">Valor Equipaje</label>
+                    <input type="number" class="form-control" id="valor_equipaje" formControlName="valor_equipaje">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary" [disabled]="!reservaForm.valid">
+                    {{ reservaForm.get('id')?.value ? 'Actualizar' : 'Crear' }} Reserva
+                </button>
+                <button type="button" class="btn btn-secondary ms-2" (click)="resetForm()">
+                    Limpiar
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Tabla de Reservas -->
+    <div class="mt-4">
+        <h3>Lista de Reservas</h3>
+        <div *ngIf="loading" class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+        </div>
+        <div *ngIf="!loading && reservas.length === 0" class="alert alert-info">
+            No hay reservas registradas
+        </div>
+        <table *ngIf="!loading && reservas.length > 0" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Fecha Vuelo</th>
+                    <th>Hora</th>
+                    <th>Cliente</th>
+                    <th>Valor</th>
+                    <th>Valor Equipaje</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let reserva of reservas">
+                    <td>{{reserva.id}}</td>
+                    <td>{{reserva.fecha_vuelos | date}}</td>
+                    <td>{{reserva.hora}}</td>
+                    <td>{{getClienteNombre(reserva.cliente_id)}}</td>
+                    <td>{{reserva.valor}}</td>
+                    <td>{{reserva.valor_equipaje}}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info me-2" (click)="editarReserva(reserva)">Editar</button>
+                        <button class="btn btn-sm btn-danger" (click)="eliminarReserva(reserva.id!)">Eliminar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

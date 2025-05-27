@@ -1,0 +1,15 @@
+form {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  gap: 10px;
+}
+
+button {
+  margin-top: 10px;
+}
+
+li {
+  cursor: pointer;
+  margin-bottom: 5px;
+}

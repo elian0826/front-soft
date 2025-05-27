@@ -1,0 +1,122 @@
+.reserva-form-card {
+  max-width: 900px;
+  margin: 0 auto 2rem auto;
+  padding: 2rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  background: #fafbfc;
+}
+
+.form-container {
+  width: 100%;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+mat-card-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #2d3a4a;
+  margin-bottom: 1.2rem;
+  letter-spacing: 0.5px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.reserva-listado {
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  max-width: 1200px;
+  margin: 40px auto 24px auto;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+.reserva-listado table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.reserva-listado td, .reserva-listado th {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: left;
+  font-size: 1rem;
+}
+
+.reserva-listado tr:last-child td {
+  border-bottom: none;
+}
+
+.reserva-listado tr:hover {
+  background: #f5f7fa;
+  transition: background 0.2s;
+}
+
+.reserva-listado div {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  margin-top: 1rem;
+}
+
+button[mat-raised-button], button[mat-button] {
+  min-width: 120px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+button[mat-raised-button][color="accent"] {
+  background: linear-gradient(90deg, #4f8cff 0%, #6ed6ff 100%);
+  color: #fff;
+}
+
+button[mat-raised-button][color="primary"] {
+  background: linear-gradient(90deg, #2dce89 0%, #42e695 100%);
+  color: #fff;
+}
+
+button[mat-button][color="warn"] {
+  color: #e74c3c;
+}
+
+@media (max-width: 700px) {
+  .reserva-form-card {
+    padding: 1rem 0.5rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .reserva-listado {
+    padding: 12px;
+    margin: 20px 10px;
+  }
+}

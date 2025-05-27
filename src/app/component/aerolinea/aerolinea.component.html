@@ -1,0 +1,23 @@
+<h2>Gestión de Aerolíneas</h2>
+
+<form (ngSubmit)="guardar()" #formAerolinea="ngForm">
+  <label>Nombre de Aerolínea:</label>
+  <input
+    type="text"
+    [(ngModel)]="aerolinea.nombre"
+    name="nombre"
+    required
+  />
+
+  <button type="submit">{{ aerolinea.id ? 'Actualizar' : 'Crear' }}</button>
+  <button type="button" (click)="limpiar()">Limpiar</button>
+</form>
+
+<hr />
+
+<ul>
+  <li *ngFor="let a of aerolineas" (click)="seleccionar(a)">
+    {{ a.nombre }}
+    <button (click)="eliminar(a.id); $event.stopPropagation()">Eliminar</button>
+  </li>
+</ul>

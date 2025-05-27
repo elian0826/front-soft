@@ -1,0 +1,47 @@
+<div class="contenedor">
+  <h2>Gestión de Ciudades</h2>
+
+  <form (ngSubmit)="guardar()" #formulario="ngForm" class="formulario">
+    <input
+      type="text"
+      name="nombre"
+      [(ngModel)]="ciudad.nombre"
+      placeholder="Nombre de la ciudad"
+      required
+    />
+    <input
+      type="number"
+      name="pais_id"
+      [(ngModel)]="ciudad.pais_id"
+      placeholder="ID del País"
+      required
+    />
+    <button type="submit" [disabled]="formulario.invalid">
+      {{ ciudad.id ? 'Actualizar' : 'Agregar' }}
+    </button>
+    <button type="button" (click)="limpiar()">Limpiar</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>ID País</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of ciudades">
+        <td>{{ c.id }}</td>
+        <td>{{ c.nombre }}</td>
+        <td>{{ c.pais_id }}</td>
+        <td>
+          <button (click)="seleccionar(c)">Editar</button>
+          <button (click)="eliminar(c.id)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+

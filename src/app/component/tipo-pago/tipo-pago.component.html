@@ -1,0 +1,37 @@
+<div class="contenedor">
+  <h2>Gestión de Tipos de Pago</h2>
+
+  <form (ngSubmit)="guardar()" #formulario="ngForm" class="formulario">
+    <input
+      type="text"
+      name="medio_pago"
+      [(ngModel)]="tipoPago.medio_pago"
+      placeholder="Medio de pago"
+      required
+    />
+    <button type="submit" [disabled]="formulario.invalid">
+      {{ tipoPago.id ? 'Actualizar' : 'Agregar' }}
+    </button>
+    <button type="button" (click)="limpiar()">Limpiar</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Medio de Pago</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let t of tiposPago">
+        <td>{{ t.id }}</td>
+        <td>{{ t.medio_pago }}</td>
+        <td>
+          <button (click)="seleccionar(t)">Editar</button>
+          <button (click)="eliminar(t.id!)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

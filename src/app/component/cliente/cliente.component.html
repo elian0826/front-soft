@@ -1,0 +1,43 @@
+<h2 class="text-xl font-bold mb-4">Formulario de Reserva</h2>
+
+<form [formGroup]="form" class="space-y-4">
+  <input
+    type="number"
+    formControlName="documento"
+    placeholder="Cédula*"
+    class="w-full p-3 border rounded"
+  />
+
+  <!-- Mostrar mensaje si el cliente no se encuentra -->
+  <div *ngIf="clienteNoEncontrado" class="text-red-600 text-sm">
+    Cliente no encontrado.
+  </div>
+
+  <input
+    type="text"
+    formControlName="nombre"
+    placeholder="Nombre*"
+    class="w-full p-3 border rounded"
+  />
+
+  <input
+    type="date"
+    formControlName="fecha_nacimiento"
+    placeholder="Fecha de Nacimiento*"
+    class="w-full p-3 border rounded"
+  />
+
+  <input
+    type="text"
+    formControlName="telefono"
+    placeholder="Teléfono*"
+    class="w-full p-3 border rounded"
+  />
+
+  <input
+    type="email"
+    formControlName="email"
+    placeholder="Email*"
+    class="w-full p-3 border rounded"
+  />
+</form>
