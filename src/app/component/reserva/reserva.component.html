@@ -37,140 +37,160 @@
                                 {{ cliente.documento }} - {{ cliente.nombre }}
                             </mat-option>
                         </mat-autocomplete>
+                        <mat-icon matSuffix>badge</mat-icon>
                     </mat-form-field>
                 </div>
                 <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="nombre">Nombre*</label>
-                        <input type="text" class="form-control" id="nombre" formControlName="nombre" [readonly]="clienteExistente">
-                    </div>
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Nombre*</mat-label>
+                        <input matInput type="text" id="nombre" formControlName="nombre" [readonly]="clienteExistente">
+                        <mat-icon matSuffix>person</mat-icon>
+                    </mat-form-field>
                 </div>
                 <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="fecha_nacimiento">Fecha de Nacimiento*</label>
-                        <input type="date" class="form-control" id="fecha_nacimiento" formControlName="fecha_nacimiento" [readonly]="clienteExistente">
-                    </div>
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Fecha de Nacimiento*</mat-label>
+                        <input matInput type="date" id="fecha_nacimiento" formControlName="fecha_nacimiento" [readonly]="clienteExistente">
+                        <mat-icon matSuffix>cake</mat-icon>
+                    </mat-form-field>
                 </div>
             </div>
             <div class="row g-3 align-items-center mt-2">
                 <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="telefono">Teléfono*</label>
-                        <input type="text" class="form-control" id="telefono" formControlName="telefono" [readonly]="clienteExistente">
-                    </div>
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Teléfono*</mat-label>
+                        <input matInput type="text" id="telefono" formControlName="telefono" [readonly]="clienteExistente">
+                        <mat-icon matSuffix>phone</mat-icon>
+                    </mat-form-field>
                 </div>
                 <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="email">Email*</label>
-                        <input type="email" class="form-control" id="email" formControlName="email" [readonly]="clienteExistente">
-                    </div>
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Email*</mat-label>
+                        <input matInput type="email" id="email" formControlName="email" [readonly]="clienteExistente">
+                        <mat-icon matSuffix>email</mat-icon>
+                    </mat-form-field>
                 </div>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-6">
-                <div class="form-group">
-                    <label for="fecha_vuelos">Fecha de Vuelo</label>
-                    <input type="date" class="form-control" id="fecha_vuelos" formControlName="fecha_vuelos">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Fecha de Vuelo</mat-label>
+                    <input matInput 
+                           [matDatepicker]="datepicker" 
+                           formControlName="fecha_vuelos">
+                    <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+                    <mat-datepicker #datepicker></mat-datepicker>
+                </mat-form-field>
                 </div>
-            </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <mat-form-field appearance="outline" class="w-100">
                         <mat-label>Hora</mat-label>
+                        <!-- Comentado temporalmente ngxMaterialTimepicker debido a errores -->
                         <input matInput 
                                type="time" 
                                formControlName="hora" 
                                placeholder="Seleccione la hora">
-                        <mat-icon matSuffix>access_time</mat-icon>
+                         <mat-icon matSuffix>access_time</mat-icon>
                     </mat-form-field>
+                    <!-- Comentado temporalmente el componente timepicker -->
+                    <!-- <ngx-material-timepicker #picker></ngx-material-timepicker> -->
                 </div>
             </div>
         </div>
 
         <div class="row mt-3">
             <div class="col-md-6">
-                <div class="form-group">
-                    <label for="aerolinea_id">Aerolínea</label>
-                    <select class="form-control" id="aerolinea_id" formControlName="aerolinea_id">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Aerolínea</mat-label>
+                    <select matNativeControl id="aerolinea_id" formControlName="aerolinea_id">
                         <option value="">Seleccione una aerolínea</option>
                         <option *ngFor="let aerolinea of aerolineas" [value]="aerolinea.id">
                             {{aerolinea.nombre}}
                         </option>
                     </select>
-                </div>
+                    <mat-icon matSuffix>flight</mat-icon>
+                </mat-form-field>
             </div>
             <div class="col-md-6">
-                <div class="form-group">
-                    <label for="origen_id">Ciudad Origen</label>
-                    <select class="form-control" id="origen_id" formControlName="origen_id">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Ciudad Origen</mat-label>
+                    <select matNativeControl id="origen_id" formControlName="origen_id">
                         <option value="">Seleccione una ciudad</option>
                         <option *ngFor="let ciudad of ciudades" [value]="ciudad.id">
                             {{ciudad.nombre}}
                         </option>
                     </select>
-                </div>
+                    <mat-icon matSuffix>flight_takeoff</mat-icon>
+                </mat-form-field>
             </div>
         </div>
 
         <div class="row mt-3">
             <div class="col-md-6">
-                <div class="form-group">
-                    <label for="destino_id">Ciudad Destino</label>
-                    <select class="form-control" id="destino_id" formControlName="destino_id">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Ciudad Destino</mat-label>
+                    <select matNativeControl id="destino_id" formControlName="destino_id">
                         <option value="">Seleccione una ciudad</option>
                         <option *ngFor="let ciudad of ciudades" [value]="ciudad.id">
                             {{ciudad.nombre}}
                         </option>
                     </select>
-                </div>
+                    <mat-icon matSuffix>flight_land</mat-icon>
+                </mat-form-field>
             </div>
             <div class="col-md-6">
-                <div class="form-group">
-                    <label for="moneda_id">Moneda</label>
-                    <select class="form-control" id="moneda_id" formControlName="moneda_id">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Moneda</mat-label>
+                    <select matNativeControl id="moneda_id" formControlName="moneda_id">
                         <option value="">Seleccione moneda</option>
                         <option *ngFor="let moneda of monedas" [value]="moneda.id">
                             {{moneda.tipo_moneda}}
                         </option>
                     </select>
-                </div>
+                    <mat-icon matSuffix>attach_money</mat-icon>
+                </mat-form-field>
             </div>
         </div>
 
         <div class="row mt-3">
             <div class="col-md-4">
-                <div class="form-group">
-                    <label for="tipo_pago_id">Tipo de Pago</label>
-                    <select class="form-control" id="tipo_pago_id" formControlName="tipo_pago_id">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Tipo de Pago</mat-label>
+                    <select matNativeControl id="tipo_pago_id" formControlName="tipo_pago_id">
                         <option value="">Seleccione tipo de pago</option>
                         <option *ngFor="let tipoPago of tiposPago" [value]="tipoPago.id">
                             {{tipoPago.medio_pago}}
                         </option>
                     </select>
-                </div>
+                    <mat-icon matSuffix>payment</mat-icon>
+                </mat-form-field>
             </div>
             <div class="col-md-4">
-                <div class="form-group">
-                    <label for="numero_vuelos">Número de Vuelos</label>
-                    <input type="number" class="form-control" id="numero_vuelos" formControlName="numero_vuelos">
-                </div>
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Número de Vuelos</mat-label>
+                    <input matInput type="number" id="numero_vuelos" formControlName="numero_vuelos">
+                    <mat-icon matSuffix>format_list_numbered</mat-icon>
+                </mat-form-field>
             </div>
         </div>
 
         <div class="row mt-3">
             <div class="col-md-6">
-                <div class="form-group">
-                    <label for="valor">Valor</label>
-                    <input type="number" class="form-control" id="valor" formControlName="valor">
-                </div>
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Valor</mat-label>
+                    <input matInput type="number" id="valor" formControlName="valor">
+                    <mat-icon matSuffix>attach_money</mat-icon>
+                </mat-form-field>
             </div>
             <div class="col-md-6">
-                <div class="form-group">
-                    <label for="valor_equipaje">Valor Equipaje</label>
-                    <input type="number" class="form-control" id="valor_equipaje" formControlName="valor_equipaje">
-                </div>
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Valor Equipaje</mat-label>
+                    <input matInput type="number" id="valor_equipaje" formControlName="valor_equipaje">
+                    <mat-icon matSuffix>luggage</mat-icon>
+                </mat-form-field>
             </div>
         </div>
 
@@ -181,10 +201,6 @@
                 </button>
                 <button type="button" class="btn btn-secondary ms-2" (click)="resetForm()">
                     Limpiar
-                </button>
-                <!-- Botón de depuración temporal -->
-                <button type="button" class="btn btn-info ms-2" (click)="verificarEstadoFormulario()">
-                    Verificar Estado (Depuración)
                 </button>
             </div>
         </div>

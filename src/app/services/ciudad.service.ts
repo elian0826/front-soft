@@ -3,13 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseService } from './base.service';
 import { API_CONFIG } from '../config/api.config';
-
-export interface CiudadDto {
-    id?: number;
-    nombre: string;
-    codigo: string;
-    paisId: number;
-}
+import { CiudadDto } from '../dto/Ciudad';
 
 @Injectable({
     providedIn: 'root'

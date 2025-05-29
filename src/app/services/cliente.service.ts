@@ -16,10 +16,9 @@ export class ClienteService extends BaseService<ClienteDto> {
         super(http);
     }
 
-    getByDocumento(documento: number): Observable<ClienteDto> {
-        return this.http.get<Mensaje<ClienteDto>>(`${API_CONFIG.baseUrl}${this.endpoint}/documento/${documento}`)
-            .pipe(
-                map(response => response.data as ClienteDto)
-            );
+    getByDocumento(documento: string): Observable<ClienteDto | null> {
+        return this.http.get<Mensaje<ClienteDto>>(`${API_CONFIG.baseUrl}${this.endpoint}/documento/${documento}`).pipe(
+            map(response => response.data || null)
+        );
     }
 }

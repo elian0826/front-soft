@@ -8,6 +8,7 @@ export const API_CONFIG = {
         equipajes: '/equipajes',
         monedas: '/monedas',
         paises: '/paises',
-        tiposPago: '/tipos-pago'
+        tiposPago: '/tipos-pago',
+        listasGenerales: '/listasgenerales'
     }
 }; 
