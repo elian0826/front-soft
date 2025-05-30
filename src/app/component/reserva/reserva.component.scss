@@ -242,7 +242,7 @@ $btn-close-color-hover: color.adjust($btn-close-color, $lightness: -20%);
            background-color: transparent; // Fondo transparente
 
            &:hover:not(:disabled) {
-                background-color: rgba(color.red($primary-color), color.green($primary-color), color.blue($primary-color), 0.05); // Fondo sutil al pasar el ratón
+                background-color: rgba(color.channel($primary-color, "red", $space: rgb), color.channel($primary-color, "green", $space: rgb), color.channel($primary-color, "blue", $space: rgb), 0.05); // Fondo sutil al pasar el ratón
            }
       }
 
@@ -250,7 +250,7 @@ $btn-close-color-hover: color.adjust($btn-close-color, $lightness: -20%);
             // Estilos para botones planos si los usas
             color: $primary-color;
             &:hover:not(:disabled) {
-                 background-color: rgba(color.red($primary-color), color.green($primary-color), color.blue($primary-color), 0.05);
+                 background-color: rgba(color.channel($primary-color, "red", $space: rgb), color.channel($primary-color, "green", $space: rgb), color.channel($primary-color, "blue", $space: rgb), 0.05);
             }
        }
 

@@ -15,7 +15,7 @@ import { ClienteDto } from '../../dto/cliente.dto';
 import { AerolineaDto } from '../../dto/Aerolinea';
 import { CiudadDto } from '../../dto/Ciudad';
 import { Equipaje } from '../../dto/Equipaje';
-import Swal from 'sweetalert2';
+import Swal, { SweetAlertResult } from 'sweetalert2';
 import { Observable, of, Subject } from 'rxjs';
 import { map, startWith, debounceTime, switchMap, catchError, takeUntil } from 'rxjs/operators';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -350,7 +350,7 @@ export class ReservaComponent implements OnInit, OnDestroy {
                 cancelButtonColor: "#d33",
                 confirmButtonText: "Sí, guardar",
                 cancelButtonText: "Cancelar"
-            }).then((result) => {
+            }).then((result: SweetAlertResult) => {
                 if (result.isConfirmed) {
                     this.onSubmitInternal();
                 }
@@ -425,7 +425,7 @@ export class ReservaComponent implements OnInit, OnDestroy {
             cancelButtonColor: "#d33",
             confirmButtonText: "Sí, eliminarlo!",
             cancelButtonText: "Cancelar"
-        }).then((result) => {
+        }).then((result: SweetAlertResult) => {
             if (result.isConfirmed) {
                 this.loading = true;
                 this.errorMessage = '';
@@ -795,7 +795,7 @@ export class ReservaComponent implements OnInit, OnDestroy {
             cancelButtonColor: "#d33",
             confirmButtonText: "Sí, descargar",
             cancelButtonText: "Cancelar"
-        }).then((result) => {
+        }).then((result: SweetAlertResult) => {
             if (result.isConfirmed) {
                 // Si el usuario confirma, proceder con la descarga (el formulario ya está deshabilitado)
                 this.confirmarYDescargarReporte();
