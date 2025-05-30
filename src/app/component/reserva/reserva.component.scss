@@ -1,34 +1,45 @@
 @use "sass:color";
 
-$primary-color: #004085;
+// == Variables ==
+$primary-color: #004085; // Azul oscuro principal
 $primary-color-hover: color.adjust($primary-color, $lightness: -10%);
-$secondary-color: #6c757d;
+$secondary-color: #6c757d; // Gris
 $secondary-color-hover: color.adjust($secondary-color, $lightness: -10%);
-$success-color: #28a745;
-$error-color: #dc3545;
-$warning-color: #ffc107;
+$success-color: #28a745; // Verde
+$error-color: #dc3545; // Rojo
+$warning-color: #ffc107; // Amarillo
 
-$border-radius: 6px;
+$background-light: #f8f9fa; // Fondo gris claro
+$card-background: #ffffff; // Fondo blanco para tarjetas/formularios
+
+$border-radius: 6px; // Radio de borde ligeramente mayor
 $box-shadow-light: 0 2px 8px rgba(0,0,0,0.12);
 $transition-speed: 0.3s;
 
 // Definición de color para el botón cerrar (btn-close)
 $btn-close-color: #333;
+$btn-close-color-hover: color.adjust($btn-close-color, $lightness: -20%);
 
+// == Global Styles (within component scope) ==
 .container {
   max-width: 900px;
   margin: 40px auto;
   padding: 0 20px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', sans-serif; // Usar Inter, común con Material Design
   color: #333;
+  background-color: $background-light; // Aplicar fondo claro al contenedor
+  border-radius: $border-radius;
+  box-shadow: $box-shadow-light; // Sombra sutil para el contenedor principal
 
   h2 {
     font-weight: 700;
     margin-bottom: 30px;
-    color: $primary-color;
+    color: $primary-color; // Color del título principal
     text-align: center;
+    padding-top: 20px; // Espacio superior para el título
   }
 
+  // == Mensajes de alerta (SweetAlert2 o similar) ==
   .alert {
     border-radius: $border-radius;
     padding: 15px 20px;
@@ -40,6 +51,8 @@ $btn-close-color: #333;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    opacity: 1; // Asegurar visibilidad inicial
+    transition: opacity $transition-speed normal ease; // Transición para fade-out si se usa con *ngIf
 
     &.alert-success {
       background-color: color.adjust($success-color, $lightness: 40%);
@@ -75,27 +88,33 @@ $btn-close-color: #333;
     }
   }
 
+  // == Estilos del formulario ==
   form {
-    background-color: #fff;
+    background-color: $card-background;
     border-radius: $border-radius;
-    box-shadow: $box-shadow-light;
+    box-shadow: $box-shadow-light; // Sombra más ligera para el formulario en sí
     padding: 30px 35px;
     margin-top: 20px;
 
+    // Sección de datos del cliente (card)
     .card {
       border-radius: $border-radius;
       padding: 25px 30px;
-      box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
-      background-color: #f9f9f9;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.05); // Sombra interna sutil
+      background-color: #f9f9f9; // Fondo ligeramente diferente para esta sección
       margin-bottom: 30px;
+      border: 1px solid #e0e0e0; // Borde sutil
 
       h5 {
         margin-bottom: 20px;
-        color: $primary-color;
+        color: $primary-color; // Color del título de la sección
         font-weight: 700;
+        border-bottom: 2px solid color.adjust($primary-color, $lightness: 20%); // Subrayado decorativo
+        padding-bottom: 10px;
       }
     }
 
+    // Estilos generales para campos de formulario (antes de Material Design overrides)
     .form-group {
       margin-bottom: 20px;
 
@@ -119,8 +138,8 @@ $btn-close-color: #333;
 
         &:focus {
           outline: none;
-          border-color: $primary-color;
-          box-shadow: 0 0 8px rgba(0, 64, 133, 0.3);
+          border-color: $primary-color; // Borde al enfocar
+          box-shadow: 0 0 8px rgba(0, 64, 133, 0.3); // Sombra de enfoque
         }
 
         &[readonly] {
@@ -130,7 +149,7 @@ $btn-close-color: #333;
       }
     }
 
-    // Grid (Bootstrap-like)
+    // == Grid (Bootstrap-like, mantener tu estructura) ==
     .row {
       margin-left: -10px;
       margin-right: -10px;
@@ -156,16 +175,36 @@ $btn-close-color: #333;
       max-width: 100%;
     }
 
-    .btn {
-      padding: 12px 28px;
-      font-size: 1.05rem;
-      border-radius: $border-radius;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color $transition-speed ease, box-shadow $transition-speed ease;
+    // == Estilos para el grupo de botones ==
+    .button-group {
+      display: flex; // Usar flexbox para alinear
+      gap: 10px; // Aumentar ligeramente el espacio entre botones
+      align-items: center; // Alinear verticalmente al centro
+      justify-content: flex-start; // Alinear a la izquierda (por defecto)
+      padding-top: 20px; // Espacio superior para separar del formulario
 
-      &.btn-primary {
+      // Estilos generales para botones nativos y de Material
+      .btn,
+      button[mat-button],
+      button[mat-raised-button],
+      button[mat-stroked-button] {
+           padding: 12px 28px; // Ajustar padding
+           font-size: 1.05rem; // Ajustar tamaño de fuente
+           border-radius: $border-radius; // Aplicar radio de borde
+           font-weight: 600;
+           cursor: pointer;
+           transition: background-color $transition-speed ease, box-shadow $transition-speed ease; // Añadir transición a opacidad
+           text-transform: uppercase; // Opcional: texto en mayúsculas
+
+           &:disabled {
+                opacity: 0.6; // Reducir opacidad al deshabilitar
+                cursor: not-allowed;
+                box-shadow: none !important; // Asegurar que no haya sombra al deshabilitar
+           }
+      }
+
+      // Estilos específicos para botones normales (Crear/Limpiar si no son Material)
+      .btn-primary {
         background-color: $primary-color;
         color: #fff;
         box-shadow: 0 4px 6px rgba(0,64,133,0.3);
@@ -174,28 +213,148 @@ $btn-close-color: #333;
           background-color: $primary-color-hover;
           box-shadow: 0 6px 10px rgba(0,64,133,0.5);
         }
-
-        &:disabled {
-          background-color: color.adjust($primary-color, $lightness: 40%);
-          cursor: not-allowed;
-          box-shadow: none;
-        }
       }
 
-      &.btn-secondary {
+      .btn-secondary {
         background-color: $secondary-color;
         color: #fff;
         box-shadow: 0 4px 6px rgba(108,117,125,0.3);
 
-        &:hover {
+        &:hover:not(:disabled) {
           background-color: $secondary-color-hover;
           box-shadow: 0 6px 10px rgba(108,117,125,0.5);
         }
       }
 
-      &.ms-2 {
-        margin-left: 0.5rem;
+      // Estilos específicos para botones de Angular Material
+      button[mat-raised-button].mat-primary {
+          background-color: $primary-color;
+          color: #fff;
+
+          &:hover:not(:disabled) {
+              background-color: $primary-color-hover;
+          }
+      }
+
+      button[mat-stroked-button].mat-primary {
+           border-color: $primary-color; // Color del borde
+           color: $primary-color; // Color del texto
+           background-color: transparent; // Fondo transparente
+
+           &:hover:not(:disabled) {
+                background-color: rgba(color.red($primary-color), color.green($primary-color), color.blue($primary-color), 0.05); // Fondo sutil al pasar el ratón
+           }
+      }
+
+       button[mat-button] {
+            // Estilos para botones planos si los usas
+            color: $primary-color;
+            &:hover:not(:disabled) {
+                 background-color: rgba(color.red($primary-color), color.green($primary-color), color.blue($primary-color), 0.05);
+            }
+       }
+
+      // Asegurarse de que el margen entre botones Material funcione con flexbox gap
+      .mat-button + .mat-button,
+      .mat-raised-button + .mat-raised-button,
+      .mat-stroked-button + .mat-stroked-button,
+      .mat-button + .mat-raised-button,
+      .mat-raised-button + .mat-button,
+      .mat-button + .mat-stroked-button,
+      .mat-stroked-button + .mat-button,
+      .mat-raised-button + .mat-stroked-button,
+      .mat-stroked-button + .mat-raised-button {
+          margin-left: 0 !important; // Anular margen por defecto si usas gap
       }
     }
-  }
+
+    // == Estilos para Angular Material Form Fields ==
+    .mat-form-field {
+      width: 100%; // Asegurar que ocupen todo el ancho de su columna
+      margin-bottom: 15px; // Espacio debajo de cada campo
+
+       .mat-form-field-wrapper {
+           padding-bottom: 0; // Reducir espacio extra si es necesario
+       }
+
+        .mat-form-field-appearance-outline .mat-form-field-outline {
+             color: #ccc; // Color normal del borde
+             transition: color $transition-speed fast ease; // Transición de color del borde
+        }
+
+         .mat-form-field-appearance-fill .mat-form-field-underline {
+              background-color: #ccc; // Color normal del subrayado
+              transition: background-color $transition-speed fast ease; // Transición de color del subrayado
+         }
+
+         // Estilos al enfocar
+         &.mat-focused .mat-form-field-outline-thick {
+             color: $primary-color; // Color del borde al enfocar
+         }
+
+         &.mat-focused .mat-form-field-underline::before {
+             background-color: $primary-color; // Color del subrayado al enfocar
+         }
+
+         // Estilos para campos inválidos (general, no solo en descarga)
+         &.mat-form-field-invalid {
+             // Color del borde/subrayado de error
+             .mat-form-field-outline-thick {
+                 color: $error-color !important; // Asegurar color rojo en outline
+             }
+             .mat-form-field-underline::before {
+                 background-color: $error-color !important; // Asegurar color rojo en fill
+             }
+              // Color del label y del hint/error text
+             .mat-form-field-label,
+             .mat-error {
+                 color: $error-color !important; // Asegurar color rojo
+             }
+              // Color del texto de entrada y del icono
+              .mat-input-element,
+              .mat-icon {
+                  color: $error-color !important; // Asegurar color rojo para texto y icono
+              }
+         }
+
+        // Estilos para ANULAR completamente el marcado de error cuando se descarga el reporte
+        // Estos selectores son muy específicos para intentar prevalecer
+        &.is-downloading {
+
+            // Anular borde y subrayado de campos inválidos
+            .mat-form-field-appearance-outline.mat-form-field-invalid .mat-form-field-outline-thick,
+            .mat-form-field-appearance-fill.mat-form-field-invalid .mat-form-field-underline::before {
+                color: initial !important; // Usar initial o el color normal
+                border-color: initial !important; // Usar initial o el color normal para bordes
+                background-color: initial !important; // Usar initial o el color normal para subrayados
+            }
+
+            // Anular color del label si se pone rojo
+            .mat-form-field-invalid .mat-form-field-label {
+                color: initial !important; // Usar initial o el color normal del label
+            }
+
+            // Anular color de texto de input si se pone rojo
+            .mat-form-field-invalid .mat-input-element {
+                color: initial !important; // Usar initial o el color normal del texto del input
+            }
+
+            // Asegurarse de que los iconos no se pongan rojos
+            .mat-form-field-invalid .mat-icon {
+                color: initial !important; // Usar initial o el color normal del icono
+            }
+
+            // Opcional: Anular estilos de mensajes de error debajo de los campos si los hay
+            .mat-error {
+                display: none !important;
+            }
+        }
+    }
+
+    // Estilos para datepicker y timepicker (si usas ngx-material-timepicker)
+    // Puedes añadir estilos específicos aquí para mejorar su apariencia
+    // .mat-datepicker-toggle, .ngx-material-timepicker-toggle { ... }
+
+
+}
 }

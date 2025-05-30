@@ -2,7 +2,7 @@
     <h2>Gestión de Reservas</h2>
 
     <!-- Mensajes de error -->
-    <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <div *ngIf="errorMessage && !isDownloadingReport" class="alert alert-danger alert-dismissible fade show" role="alert">
         {{errorMessage}}
         <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
     </div>
@@ -19,7 +19,7 @@
         <button type="button" class="btn-close" (click)="ciudadesIguales = false"></button>
     </div>
 
-    <form [formGroup]="reservaForm" (ngSubmit)="onSubmit()" class="mt-4">
+    <form [formGroup]="reservaForm" (ngSubmit)="onSubmit()" class="mt-4" [class.is-downloading]="isDownloadingReport">
         <!-- Bloque de datos del cliente -->
         <div class="card mb-4 p-3 shadow-sm">
             <h5 class="mb-3">Datos del Cliente</h5>
@@ -77,8 +77,8 @@
             <div class="col-md-6">
                 <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Fecha de Vuelo</mat-label>
-                    <input matInput 
-                           [matDatepicker]="datepicker" 
+                    <input matInput
+                           [matDatepicker]="datepicker"
                            formControlName="fecha_vuelos">
                     <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
                     <mat-datepicker #datepicker></mat-datepicker>
@@ -88,15 +88,12 @@
                 <div class="form-group">
                     <mat-form-field appearance="outline" class="w-100">
                         <mat-label>Hora</mat-label>
-                        <!-- Comentado temporalmente ngxMaterialTimepicker debido a errores -->
-                        <input matInput 
-                               type="time" 
-                               formControlName="hora" 
+                        <input matInput
+                               type="time"
+                               formControlName="hora"
                                placeholder="Seleccione la hora">
                          <mat-icon matSuffix>access_time</mat-icon>
                     </mat-form-field>
-                    <!-- Comentado temporalmente el componente timepicker -->
-                    <!-- <ngx-material-timepicker #picker></ngx-material-timepicker> -->
                 </div>
             </div>
         </div>
@@ -195,12 +192,15 @@
         </div>
 
         <div class="row mt-4">
-            <div class="col-12">
+            <div class="col-12 button-group">
                 <button type="submit" class="btn btn-primary" [disabled]="!reservaForm.valid || ciudadesIguales">
                     {{ reservaForm.get('id')?.value ? 'Actualizar' : 'Crear' }} Reserva
                 </button>
-                <button type="button" class="btn btn-secondary ms-2" (click)="resetForm()">
+                <button type="button" class="btn btn-secondary" (click)="resetForm()">
                     Limpiar
+                </button>
+                <button type="button" mat-stroked-button color="primary" (click)="iniciarDescargaReporte()">
+                  Reporte Reservas
                 </button>
             </div>
         </div>

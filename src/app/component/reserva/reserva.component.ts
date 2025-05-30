@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
 import { ReservaService } from '../../services/reserva.service';
 import { ClienteService } from '../../services/cliente.service';
 import { AerolineaService } from '../../services/aerolinea.service';
@@ -9,6 +9,7 @@ import { EquipajeService } from '../../services/equipaje.service';
 import { MonedaService, MonedaDto } from '../../services/moneda.service';
 import { TipoPagoService, TipoPagoDto } from '../../services/tipo-pago.service';
 import { ListasGeneralesService } from '../../services/listas-generales.service';
+import { ReporteService } from '../../services/reporte.service';
 import { ReservaDto } from '../../dto/Reserva';
 import { ClienteDto } from '../../dto/cliente.dto';
 import { AerolineaDto } from '../../dto/Aerolinea';
@@ -79,11 +80,14 @@ export class ReservaComponent implements OnInit, OnDestroy {
     showConfirmModal = false;
     clienteExistente = false;
     ciudadesIguales: boolean = false;
+    isDownloadingReport: boolean = false;
+    formSubmitted: boolean = false;
 
     filteredClientes$: Observable<any[]> = of([]);
     documentoControl;
 
     private destroy$ = new Subject<void>();
+    private requiredValidators: { [key: string]: ValidatorFn | ValidatorFn[] | null } = {};
 
     constructor(
         private fb: FormBuilder,
@@ -94,7 +98,8 @@ export class ReservaComponent implements OnInit, OnDestroy {
         private equipajeService: EquipajeService,
         private monedaService: MonedaService,
         private tipoPagoService: TipoPagoService,
-        private listasGeneralesService: ListasGeneralesService
+        private listasGeneralesService: ListasGeneralesService,
+        private reporteService: ReporteService
     ) {
         this.documentoControl = this.fb.control('', Validators.required);
         this.reservaForm = this.fb.group({
@@ -137,6 +142,8 @@ export class ReservaComponent implements OnInit, OnDestroy {
         this.cargarDatos();
         this.cargarSelects();
 
+        this.storeRequiredValidators();
+
         this.clienteService.getAll().pipe(takeUntil(this.destroy$)).subscribe(clientes => {
             this.clientes = clientes;
         });
@@ -159,6 +166,39 @@ export class ReservaComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    private storeRequiredValidators(): void {
+        Object.keys(this.reservaForm.controls).forEach(key => {
+            const control = this.reservaForm.get(key);
+            if (control && control.validator) {
+                 const validator = control.validator;
+                 const errors = validator(control as AbstractControl);
+                 if (errors && errors['required']) {
+                      this.requiredValidators[key] = validator;
+                 }
+            }
+        });
+    }
+
+    private temporarilyRemoveRequiredValidators(): void {
+        Object.keys(this.requiredValidators).forEach(key => {
+            const control = this.reservaForm.get(key);
+            if (control) {
+                control.clearValidators();
+                control.updateValueAndValidity({ emitEvent: false });
+            }
+        });
+    }
+
+    private restoreRequiredValidators(): void {
+         Object.keys(this.requiredValidators).forEach(key => {
+             const control = this.reservaForm.get(key);
+             if (control && this.requiredValidators[key]) {
+                 control.setValidators(this.requiredValidators[key]);
+                 control.updateValueAndValidity();
+             }
+         });
     }
 
     cargarDatos(): void {
@@ -316,10 +356,12 @@ export class ReservaComponent implements OnInit, OnDestroy {
                 }
             });
         } else {
-            if (this.ciudadesIguales) {
-                this.errorMessage = 'La ciudad de origen y destino no pueden ser la misma.';
-            } else if (!this.reservaForm.valid) { 
-                this.errorMessage = 'Por favor, complete todos los campos requeridos correctamente.';
+            if (!this.isDownloadingReport) {
+                if (this.ciudadesIguales) {
+                    this.errorMessage = 'La ciudad de origen y destino no pueden ser la misma.';
+                } else if (!this.reservaForm.valid) {
+                    this.errorMessage = 'Por favor, complete todos los campos requeridos correctamente.';
+                }
             }
         }
     }
@@ -365,12 +407,12 @@ export class ReservaComponent implements OnInit, OnDestroy {
     }
 
     onSubmit(): void {
+        this.formSubmitted = true;
         this.abrirConfirmacion();
     }
 
     editarReserva(reserva: ReservaDto): void {
         this.reservaForm.patchValue(reserva);
-      
     }
 
     eliminarReserva(id: number): void {
@@ -448,6 +490,7 @@ export class ReservaComponent implements OnInit, OnDestroy {
         this.errorMessage = '';
         this.successMessage = '';
         this.ciudadesIguales = false;
+        this.formSubmitted = false;
         Object.keys(this.reservaForm.controls).forEach(key => {
             this.reservaForm.get(key)?.setErrors(null);
         });
@@ -566,9 +609,9 @@ export class ReservaComponent implements OnInit, OnDestroy {
             numero_vuelos: Number(this.reservaForm.value.numero_vuelos),
             valor: Number(this.reservaForm.value.valor),
             fecha_vuelos: this.reservaForm.value.fecha_vuelos,
-            hora: this.reservaForm.value.hora, 
+            hora: this.reservaForm.value.hora,
             valor_equipaje: Number(this.reservaForm.value.valor_equipaje),
-            cliente_id: 0, 
+            cliente_id: 0,
             aerolinea_id: Number(this.reservaForm.value.aerolinea_id),
             moneda_id: Number(this.reservaForm.value.moneda_id),
             tipo_pago_id: Number(this.reservaForm.value.tipo_pago_id),
@@ -576,7 +619,6 @@ export class ReservaComponent implements OnInit, OnDestroy {
             destino_id: Number(this.reservaForm.value.destino_id)
         };
 
-        // Construir el objeto ClienteDto con los datos del formulario
          const cliente: ClienteDto = {
             documento: this.reservaForm.value.documento,
             nombre: this.reservaForm.value.nombre,
@@ -707,7 +749,7 @@ export class ReservaComponent implements OnInit, OnDestroy {
         this.ciudadesIguales = origen && destino && origen === destino;
         Object.keys(this.reservaForm.controls).forEach(key => {
             const control = this.reservaForm.get(key);
-            if (control?.invalid) { 
+            if (control?.invalid) {
             }
         });
 
@@ -720,13 +762,134 @@ export class ReservaComponent implements OnInit, OnDestroy {
                 this.errorMessage = '';
             }
         }
-        if (!this.reservaForm.valid && !this.ciudadesIguales) {
-             this.errorMessage = 'Por favor, complete todos los campos requeridos correctamente.';
-        } else if (this.reservaForm.valid && !this.ciudadesIguales) {
-             if (this.errorMessage === 'Por favor, complete todos los campos requeridos correctamente.') {
-                 this.errorMessage = '';
-             }
+        if (!this.isDownloadingReport) {
+            if (!this.reservaForm.valid && !this.ciudadesIguales) {
+                 this.errorMessage = 'Por favor, complete todos los campos requeridos correctamente.';
+            } else if (this.reservaForm.valid && !this.ciudadesIguales) {
+                 if (this.errorMessage === 'Por favor, complete todos los campos requeridos correctamente.') {
+                     this.errorMessage = '';
+                 }
+            }
         }
+    }
+
+    // Método que se llama al hacer clic en el botón 'Reporte Reservas'
+    iniciarDescargaReporte() {
+        // Activar la bandera para control visual y de mensajes de error
+        this.isDownloadingReport = true;
+        this.errorMessage = ''; // Limpiar mensajes de error al inicio
+
+        // Deshabilitar temporalmente el formulario completo *antes* de mostrar la alerta
+        this.reservaForm.disable({ emitEvent: false });
+
+        // Limpiar errorMessage *justo antes* de mostrar la alerta, por si se reestableció
+        this.errorMessage = '';
+
+        // Mostrar la alerta de confirmación
+        Swal.fire({
+            title: "¿Está seguro?",
+            text: "¿Desea descargar el reporte de reservas?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Sí, descargar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, proceder con la descarga (el formulario ya está deshabilitado)
+                this.confirmarYDescargarReporte();
+                 this.errorMessage = ''; // Asegurar limpieza después de confirmar (la lógica de confirmacionYDescargar también limpia al final)
+            } else {
+                // Si cancela, desactivar la bandera y habilitar el formulario
+                 this.isDownloadingReport = false;
+                 this.reservaForm.enable(); // Habilitar el formulario
+                 // Forzar re-validación si es necesario para mostrar errores si el formulario está incompleto para guardar
+                 this.reservaForm.updateValueAndValidity();
+                 this.errorMessage = ''; // Asegurar limpieza después de cancelar
+            }
+        });
+    }
+
+    // Método que contiene la lógica real de descarga (llamado después de la confirmación)
+    private confirmarYDescargarReporte() {
+        // El formulario ya está deshabilitado al llegar aquí desde iniciarDescargaReporte
+
+        // La lógica para marcar como untouched/pristine y manipular validadores ya no es tan crítica aquí si se controla por CSS y disable/enable,
+        // pero la dejaremos por ahora por si acaso.
+        // Object.keys(this.reservaForm.controls).forEach(key => { ... });
+        // this.temporarilyRemoveRequiredValidators();
+
+        this.reporteService.generarReporteReservasPdf().subscribe({
+            next: (blob) => {
+                if (blob.size > 100) {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'reporte_reservas.pdf'; // Nombre del archivo a descargar
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url); // Liberar el recurso después de la descarga
+                    document.body.removeChild(a);
+
+                    // Mostrar mensaje de éxito tras descarga
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Descarga Exitosa!',
+                        text: 'El reporte se ha generado y descargado correctamente.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+
+                } else {
+                    console.error('Respuesta inesperada o blob vacío recibido.', blob);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error al descargar el reporte',
+                        text: 'Hubo un problema al generar el reporte. Inténtalo de nuevo o contacta al administrador.',
+                    });
+                }
+                this.isDownloadingReport = false; // Desactivar la bandera
+                this.reservaForm.enable(); // Habilitar el formulario
+                this.reservaForm.updateValueAndValidity(); // Forzar re-validación para mostrar errores si es necesario
+                // Restaurar estados touched/dirty si es necesario
+                 Object.keys(this.reservaForm.controls).forEach(key => {
+                     const control = this.reservaForm.get(key);
+                     if (control && control.value !== null && control.value !== '') {
+                          control.markAsTouched({ onlySelf: true });
+                          control.markAsDirty({ onlySelf: true }); // Corregido typo
+                     }
+                 });
+                this.errorMessage = ''; // Limpieza final después de éxito
+            },
+            error: (err) => {
+                console.error('Error al descargar el reporte:', err);
+                let errorMessage = 'Hubo un problema al generar o descargar el reporte.';
+                if (err.error && err.error.mensaje) {
+                    errorMessage = err.error.mensaje;
+                } else if (err.message) {
+                    errorMessage = err.message;
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al descargar el reporte',
+                    text: errorMessage,
+                });
+                this.isDownloadingReport = false; // Desactivar la bandera
+                this.reservaForm.enable(); // Habilitar el formulario
+                this.reservaForm.updateValueAndValidity(); // Forzar re-validación
+                 // Restaurar estados touched/dirty si es necesario
+                 Object.keys(this.reservaForm.controls).forEach(key => {
+                     const control = this.reservaForm.get(key);
+                     if (control && control.value !== null && control.value !== '') {
+                          control.markAsTouched({ onlySelf: true });
+                          control.markAsDirty({ onlySelf: true }); // Corregido typo
+                     }
+                 });
+                this.errorMessage = ''; // Limpieza final después de error
+            }
+        });
     }
 }
 
